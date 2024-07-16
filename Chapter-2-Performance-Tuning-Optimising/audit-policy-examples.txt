@@ -1,0 +1,44 @@
+---
+apiVersion: audit.k8s.io/v1
+kind: Policy
+omitStages:
+  - "RequestReceived"
+rules:
+  - namespaces: ["prod", "test"]
+    verbs: ["delete"]
+    resources:
+    - group: ""
+      resources: ["pods"]
+      resourceNames: ["web-app-pod"]
+    level: RequestResponse
+
+  - level: RequestResponse
+    verbs: ["delete", "create"]
+    resources:
+    - group: ""
+      resources: ["pods"]
+
+  - level: Request
+    verbs: ["create", "update", "patch"]
+    resources:
+      - group: ""  # core
+        resources: ["pods", "replicacontrollers", "container"]
+      - group: "apps"
+        resources: ["daemonsets", "deployments", "replicasets", "statefulsets"]
+      - group: "batch"
+        resources: ["jobs", "cronjobs"]
+      - group: "extensions" # necessary for pre-1.12 clusters
+        resources: ["daemonsets", "deployments", "replicasets"]
+
+---
+apiVersion: audit.k8s.io/v1
+kind: Policy
+omitStages:
+  - "RequestReceived"
+rules:
+  - level: RequestResponse
+    verbs: ["delete", "create"]
+    resources:
+    - group: ""
+      resources: ["pods"]
+

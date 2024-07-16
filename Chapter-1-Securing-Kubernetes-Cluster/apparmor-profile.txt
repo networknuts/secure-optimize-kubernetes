@@ -1,0 +1,99 @@
+Step #1 - Login on a kubernetes nodes and check status of apparmor
+
+cat /sys/module/apparmor/parameters/enabled
+systemctl status apparmor
+
+aa-status
+
+Step #2 Create a pod and try creating a file from inside the pod. 
+        Pod is writing on host filesystem
+
+vim apparmor-test-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testpod
+  labels:
+   app: testpod
+spec:
+  nodeName: nodeone
+  containers:
+    - name: boxone
+      image: lovelearnlinux/webserver:v1
+
+
+kubectl apply -f apparmor-test-pod.yaml
+
+Step #3 Now try to create a file from inside the pod. It will be a SUCCESS
+
+kubectl exec -it testpod -- /bin/bash
+echo "file from inside the pod" > /tmp/test-file
+
+Step #4 Create a apparmor profile which will deny any writes to host filesystem
+
+vim /etc/apparmor.d/deny-file-write
+
+#include <tunables/global>
+ 
+# profile <profilename> <flags> 
+profile deny-file-write flags=(attach_disconnected) {
+  #include <abstractions/base>
+
+  file,
+
+  # Deny all file writes.
+  deny /** w,
+}
+
+Step #5 Check current apparmor loaded profiles & load our profile
+
+apparmor_parser
+apparmor_parser /etc/apparmor.d/deny-file-write
+apparmor_parser | grep -i deny-file-writes
+
+apparmor_parser -C /etc/apparmor.d/deny-file-write  #load in complain mode
+apparmor_parser -R /etc/apparmor.d/deny-file-write  #disable profile
+
+aa-status
+
+
+
+Step #6 Re-create the pod with apparmor profile loaded.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testpod
+  annotations:
+    # Tell Kubernetes to apply the AppArmor profile "deny-file-writes".
+    container.apparmor.security.beta.kubernetes.io/boxone: localhost/deny-file-write
+  labels:
+   app: testpod
+spec:
+  nodeName: nodeone
+  containers:
+    - name: boxone
+      image: lovelearnlinux/webserver:v1
+
+OR
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testpod
+  labels:
+   app: testpod
+spec:
+  nodeName: nodeone
+  securityContext:
+    appArmorProfile:
+      type: Localhost
+      localhostProfile: deny-file-write
+  containers:
+    - name: boxone
+      image: lovelearnlinux/webserver:v1
+
+
+Step #7 Try creating file again from the pod. This time it will FAIL
+

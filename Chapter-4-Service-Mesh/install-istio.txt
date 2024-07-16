@@ -1,0 +1,28 @@
+Step #1 Download Istio
+
+curl -L https://istio.io/downloadIstio | sh -
+
+Step #2 Move into the istio directory
+
+export PATH=$PWD/bin:$PATH
+
+Step #3 - Run pre-check
+
+istioctl x precheck
+
+Step #4 Install Istio
+
+istioctl install --set profile=demo -y
+kubectl -n istio-system get all
+
+Step #5 Verify Istio Installation
+
+istioctl verify-install
+
+Step #6 Add add-ons
+
+kubectl apply -f ./samples/addons
+
+
+
+

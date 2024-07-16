@@ -1,0 +1,27 @@
+## INSTALL TRIVY
+
+sudo apt-get install wget apt-transport-https gnupg lsb-release
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+sudo apt-get update
+sudo apt-get install trivy
+
+
+### Scan image 
+
+trivy image [YOUR_IMAGE_NAME]
+
+Report formats:
+
+trivy image -f table your-image-name
+trivy image --severity HIGH,CRITICAL your-image-name
+trivy image -f json -o results.json your-image-name
+
+
+=== Trivy plugin for kubectl
+
+trivy plugin install github.com/aquasecurity/trivy-plugin-kubectl
+trivy kubectl -h
+trivy kubectl pod my-pod-name
+
+

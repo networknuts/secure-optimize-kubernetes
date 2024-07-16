@@ -1,0 +1,73 @@
+FROM WORKSTATION
+
+Step #1 - Install helm
+
+curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+sudo apt-get install apt-transport-https --yes
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update -y
+sudo apt-get install helm -y
+
+
+Step #2 - Install falco helm repo
+
+helm repo add falcosecurity https://falcosecurity.github.io/charts
+helm repo update
+kubectl create ns falco
+helm install falco -n falco --set tty=true falcosecurity/falco
+
+Step #3 - Check falco pods running as daemonset on all nodes
+
+kubectl -n falco get ds
+kubectl -n falco get pods
+
+Step #4 - Run a pod 
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test
+  labels:
+   app: nnappone
+spec:
+  containers:
+    - name: networknuts-app
+      image: lovelearnlinux/webserver:v1
+
+
+Step #5 - Open one more terminal. Go inside pod and run shell
+
+kubectl exec -it test -- /bin/bash
+
+<also try to run some commands like - uptime, cat /etc/passwd, cat /etc/shadow>
+
+Step #6 - Check falco logs inside the falco pod
+
+kubectl -n falco -l "app.kubernetes.io/instance=falco" logs
+
+<falco logs should warn you about those syscall from inside the pod>
+
+##################
+helm uninstall falco --namespace falco
+##################
+
+FALCO with SIDEKICK
+-------------------
+
+helm install falco -n falco --set tty=true falcosecurity/falco \
+--set falcosidekick.enabled=true \
+--set falcosidekick.webui.enabled=true \
+--set falcosidekick.webui.redis.storageEnabled=false
+
+kubectl logs -l app.kubernetes.io/name=falcosidekick -n falco
+
+kubectl -n falco get all
+
+kubectl -n falco expose deployment falco-falcosidekick-ui --name falco-sidekick-ui-np --type NodePort
+
+kubectl -n falco describe svc falco-sidekick-ui-np
+
+<from workstation, access falco sidekick - http://ip-of-manager/node:nodeport>
+username/password = admin/admin
+
+

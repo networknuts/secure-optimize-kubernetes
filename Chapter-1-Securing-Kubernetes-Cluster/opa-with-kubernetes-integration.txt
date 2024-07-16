@@ -1,0 +1,232 @@
+========= OPA
+
+1. Running kubernetes cluster
+
+2. Easiest way to install OPA is using helm
+
+3. Install helm
+
+curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+sudo apt-get install apt-transport-https --yes
+echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update
+sudo apt-get install helm
+
+4. Install OPA 
+
+helm repo add gatekeeper https://open-policy-agent.github.io/gatekeeper/charts
+helm install gatekeeper/gatekeeper --name-template=gatekeeper --namespace gatekeeper-system --create-namespace
+
+5. Check OPA status
+
+kubectl -n gatekeeper-system get all
+
+6. Create a constraint template to make certain labels mandatory on pods
+
+vim labels-needed.yaml
+
+
+---
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequiredlabels
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredLabels
+      validation:
+        # Schema for the "parameters" field
+        openAPIV3Schema:
+          properties:
+            labels:
+              type: array
+              items: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequiredlabels
+
+        violation[{"msg": msg, "details": {"missing_labels": missing}}] {
+          provided := {label | input.review.object.metadata.labels[label]}
+          required := {label | label := input.parameters.labels[_]}
+          missing := required - provided
+          count(missing) > 0
+          msg := sprintf("you must provide labels: %v", [missing])
+        }
+
+### save and exit
+kubectl apply -f labels-needed.yaml
+kubectl get constrainttemplate
+
+7. Now, create a template that uses that constraint-template
+
+A. 
+vim pod-need-labels.yaml
+
+
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: ns-must-have-ns
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    labels: ["client"]
+
+### save and exit
+
+kubectl apply -f pod-need-labels.yaml
+kubectl get constraint
+
+B. (explore more)
+vim multiple-resources-need-labels.yaml
+
+
+---
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+ name: label-check-multi
+spec:
+ match:
+   kinds:
+   - apiGroups: [""]
+     kinds: ["Namespace", "Pod"]
+   excludedNamespaces:
+   - kube-system
+   - kube-public
+   - kube-node-lease
+   - gatekeeper-system
+   namespaces:
+    - dev
+ parameters:
+   labels:
+   - "name"
+   - "client"
+   - "managed-by"
+
+
+### save and exit
+
+
+
+
+8. CREATE a pod without label defined, it will fail
+
+vim testpod.yaml
+
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: extra
+  namespace: dev
+spec:
+  containers:
+  - name: web
+    image: lovelearnlinux/webserver:v1
+    ports:
+    - containerPort: 80
+
+
+### save and exit
+
+kubectl apply -f testpod.yaml
+
+<check the ERROR>
+
+9. APPLY labels on pods, it will pass now
+
+vim testpod.yaml
+
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: extra
+  labels:
+    client: networknuts
+spec:
+  containers:
+  - name: web
+    image: lovelearnlinux/webserver:v1
+    ports:
+    - containerPort: 80
+
+### save and exit
+
+kubectl apply -f testpod.yaml
+
+########################################################
+#################### MORE EXAMPLES #####################
+########################################################
+
+#1 --- Constraint Template for denying specific type of service
+
+vim deny-service.yaml
+
+
+---
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: lbtypesvcnotallowed
+spec:
+  crd:
+    spec:
+      names:
+        kind: LBTypeSvcNotAllowed
+        listKind: LBTypeSvcNotAllowedList
+        plural: lbtypesvcnotallowed
+        singular: lbtypesvcnotallowed
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package kubernetes.admission
+        violation[{"msg": msg}] {
+                    input.review.kind.kind = "Service"
+                    input.review.operation = "CREATE"
+                    input.review.object.spec.type = "LoadBalancer"
+                    msg := "LoadBalancer Services are not permitted"
+        }
+
+### save and exit
+kubectl apply -f deny-service.yaml
+kubectl get contrainttemplate
+
+ 
+vim deny-service-for-namespace.yaml
+
+
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: LBTypeSvcNotAllowed
+metadata:
+  name: deny-lb-type-svc-dev-ns
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Service"]
+    namespaces:
+      - "dev"
+
+## save and exit
+
+kubectl apply -f deny-service-for-namespace.yaml
+kubectl get constraint
+
+
+$$$$$$$$$$$ REFERENCE FOR MORE EXAMPLES $$$$$$$$$$$$$$$$
+
+https://github.com/open-policy-agent/gatekeeper-library/tree/master/library
+https://open-policy-agent.github.io/gatekeeper-library/website/

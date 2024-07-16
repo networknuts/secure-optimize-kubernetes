@@ -1,0 +1,68 @@
+--- Install Helm
+
+
+
+--- Install tracee on kubernetes cluster
+
+helm repo add aqua https://aquasecurity.github.io/helm-charts/
+helm repo update
+helm install tracee aqua/tracee --namespace tracee --create-namespace
+
+
+---- Check tracee status
+
+kubectl -n tracee get all
+kubectl -n tracee describe configmap/tracee-policies
+
+--- Create a pod that is executing strace
+
+vim debug-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug
+spec:
+  containers:
+  - name: debug
+    image: anaisurlichs/debug-container:0.2
+
+### save and exit
+
+kubectl apply -f debug-pod.yaml
+
+Go inside the pod and run - strace ls
+
+Tracee will be able to log that activity
+
+kubectl logs -f daemonset/tracee -n tracee
+
+---- Check all active policies
+
+kubectl get policies.tracee.aquasec.com
+
+--- Policy to check new containers
+
+vim new-pid.yaml
+
+apiVersion: tracee.aquasec.com/v1beta1
+kind: Policy
+metadata:
+  name: new-pids
+  annotations:
+    description: traces openat and security_file_open for new pids
+spec:
+  scope:
+    - pid=new
+  rules:
+    - event: openat
+    - event: security_file_open
+
+## save and exit
+
+kubectl apply -f new-pid.yaml
+kubectl get policies.tracee.aquasec.com
+
+Now create a pod that will be traced by tracee
+
+Sample policies - https://github.com/aquasecurity/tracee/tree/main/examples/policies

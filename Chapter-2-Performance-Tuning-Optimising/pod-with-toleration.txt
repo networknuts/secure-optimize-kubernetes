@@ -1,0 +1,35 @@
+# pod-with-taint.yml
+#
+# first add a taint (fragrance) to nodeone.example.com:
+# kubectl taint node nodeone.example.com color=pink:NoSchedule
+# 
+# add taint for nodetwo.example.com also:
+# kubectl taint node nodetwo.example.com color=yellow:NoSchedule
+#
+# confirm that taint is applied on nodeone.example.com & nodetwo.example.com:
+# kubectl describe node nodeone.example.com
+# kubectl describe node nodetwo.example.com
+# (check for value under Taints)
+#
+apiVersion: v1
+
+kind: Pod
+
+metadata:
+  name: nnwebserver
+  namespace: learning
+
+spec:
+  containers:
+    - name: nnwebserver
+      image: lovelearnlinux/webserver:v1
+      ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+  tolerations:
+  - key: "color"
+    operator: "Equal"
+    value: "pink"
+    effect: "NoSchedule"
+

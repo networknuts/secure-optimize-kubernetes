@@ -1,0 +1,41 @@
+# pod-with-node-affinity-multiple.yaml
+#
+# First assign labels on all nodes in our cluster
+# kubectl label node nodeone.example.com size=small
+# kubectl label node nodetwo.example.com size=large
+#
+# Confirm the labels
+# kubectl get nodes --show-labels
+#
+apiVersion: v1
+kind: Pod
+metadata:
+  name: affone
+  labels:
+   app: affone
+spec:
+  containers:
+    - name: networknuts-app
+      image: lovelearnlinux/webserver:v1
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: size
+            operator: In
+            values:
+            - large
+            - medium
+
+
+#
+# Lets think we have some nodes with label small/medium/large
+# We want this pod to be deployed on either pod having small
+# OR medium label
+#
+# Confirm for the labels on nodes using:
+#
+# kubectl get nodes --show-labels 
+# Create pod
+# kubectl apply -f pod-with-node-affinity-multiple.yaml

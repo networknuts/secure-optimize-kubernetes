@@ -1,0 +1,84 @@
+################################################################
+##### RUNTIME CLASS ON KUBERNETES CLUSTER WITH CONTAINERD ######
+################################################################
+
+STEP #1 - INSTALL GVISOR ON NODES (ALL NODES)
+
+----- vim gvisor-install.sh
+
+#!/bin/bash
+
+sudo apt-get update && \
+sudo apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg
+
+curl -fsSL https://gvisor.dev/archive.key | sudo gpg --dearmor -o /usr/share/keyrings/gvisor-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/gvisor-archive-keyring.gpg] https://storage.googleapis.com/gvisor/releases release main" | sudo tee /etc/apt/sources.list.d/gvisor.list > /dev/null
+
+sudo add-apt-repository "deb [arch=amd64,arm64] https://storage.googleapis.com/gvisor/releases release main"
+
+sudo apt-get update && sudo apt-get install -y runsc
+
+### configuring runsc
+
+cat <<EOF | sudo tee /etc/containerd/config.toml
+version = 2
+[plugins."io.containerd.runtime.v1.linux"]
+  shim_debug = true
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+  runtime_type = "io.containerd.runc.v2"
+[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runsc]
+  runtime_type = "io.containerd.runsc.v1"
+EOF
+
+sudo systemctl restart containerd
+
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///run/containerd/containerd.sock
+EOF
+
+sudo systemctl restart containerd
+
+#### file ends here
+
+
+STEP #2 - ON MANAGER
+
+Create a runtime class
+
+vim runtimeclass.yaml
+
+---
+# RuntimeClass is defined in the node.k8s.io API group
+apiVersion: node.k8s.io/v1
+kind: RuntimeClass
+metadata:
+  # The name the RuntimeClass will be referenced by.
+  # RuntimeClass is a non-namespaced resource.
+  name: allsecure
+# The name of the corresponding CRI configuration
+handler: runsc
+
+
+STEP #3 - ON MANAGER
+
+Create a pod that uses runtime class
+
+vim testpod.yaml
+
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testpod
+  labels:
+    app: nginx
+spec:
+  runtimeClassName: allsecure
+  containers:
+    - name: boxone
+      image: nginx

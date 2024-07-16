@@ -1,0 +1,95 @@
+=== AUDITING
+
+
+#1 - Create a audit policy file
+
+vim /etc/kubernetes/audit-policy.yaml
+
+---
+apiVersion: audit.k8s.io/v1
+kind: Policy
+omitStages:
+  - "RequestReceived"
+rules:
+  - level: RequestResponse
+    verbs: ["delete", "create"]
+    resources:
+    - group: ""
+      resources: ["pods"]
+
+## save and exit
+
+#2 - Update the kube-apiserver to use the audit policy. Add these lines in
+/etc/kubernetes/manifests/kube-apiserver.yaml
+
+
+...
+- command:
+    - kube-apiserver
+...
+...
+- --audit-policy-file=/etc/kubernetes/audit-policy.yaml
+- --audit-log-path=/var/log/kubernetes/audit/audit.log
+
+volumeMounts:
+
+- mountPath: /etc/kubernetes/audit-policy.yaml
+  name: audit
+  readOnly: true
+- mountPath: /var/log/kubernetes/audit/
+  name: audit-log
+  readOnly: false
+
+volumes:
+- name: audit
+  hostPath:
+    path: /etc/kubernetes/audit-policy.yaml
+    type: File
+
+- name: audit-log
+  hostPath:
+    path: /var/log/kubernetes/audit/
+    type: DirectoryOrCreate
+
+## save and exit
+
+#3 - Now create/delete a pod from workstation it will be audited and logged in
+/var/log/kubernetes/audit/audit.log
+
+$$$$$$$$$$$$$$$$$$$$$$$$$$$
+SOME MORE POLICY EXAMPLES
+$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+#1 
+---
+apiVersion: audit.k8s.io/v1
+kind: Policy
+omitStages:
+  - "RequestReceived"
+rules:
+  - namespaces: ["prod", "test"]
+    verbs: ["delete"]
+    resources:
+    - group: ""
+      resources: ["pods"]
+      resourceNames: ["web-app-pod"]
+    level: RequestResponse
+
+  - level: RequestResponse
+    verbs: ["delete", "create"]
+    resources:
+    - group: ""
+      resources: ["pods"]
+
+  - level: Request
+    verbs: ["create", "update", "patch"]
+    resources:
+      - group: ""  # core
+        resources: ["pods", "replicacontrollers", "container"]
+      - group: "apps"
+        resources: ["daemonsets", "deployments", "replicasets", "statefulsets"]
+      - group: "batch"
+        resources: ["jobs", "cronjobs"]
+      - group: "extensions" # necessary for pre-1.12 clusters
+        resources: ["daemonsets", "deployments", "replicasets"]
+

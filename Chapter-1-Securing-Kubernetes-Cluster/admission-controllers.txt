@@ -1,0 +1,25 @@
+Step #1 - Check enabled admission controllers
+
+kube-apiserver -h | grep -i enable-admission-plugins
+kubectl exec kube-apiserver-controlplane -n kube-system -- kube-apiserver -h | grep enable-admission-plugins
+
+Step #2 - Enable Namespace AutoProvisioning admission controller
+
+vim /etc/kubernetes/manifests/kube-apiserver.yaml
+
+-- -enable-admission-plugins=NodeRestriction, NamespaceAutoProvision
+
+PS: NamespaceAutoProvision & NamespaceExists are replaced by - NamespaceLifecycle
+    It manages default namespaces like kube-system and they can't be deleted
+
+DefaultStorageClass - admission controller is called mutating admission controller
+as it modifies our PVC request with - storageClass: Default - when no storage class is defined
+
+Order = Mutating Admission Controllers ---> Validating Admission Controllers
+
+NamespaceAutoProvisioner is a mutating admission controller
+NamespaceExists is a validating admission controller
+
+
+
+

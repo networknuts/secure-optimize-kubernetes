@@ -1,0 +1,38 @@
+Constructing Helm Chart
+
+Create project folder
+#helm create myapache
+
+#ls -l myapache
+#tree myapache
+
+Create custom default values for chart
+
+vim myapache/values.yaml
+
+image:
+  repository: nginx
+  pullPolicy: Always
+.
+.
+serviceAccount:
+  name: "myapacheuser"
+service:
+  type: NodePort
+  port: 80
+resources:
+  limits:
+    cpu: 200m
+    memory: 200Mi
+  requests:
+    cpu: 100m
+    memory: 100Mi
+
+Install apache using custom helm chart
+
+#kubectl create ns myapache
+#helm install customapache myapache/ --values myapache/values.yaml --namespace myapache
+
+Access application
+curl http://node-ip:node-port
+

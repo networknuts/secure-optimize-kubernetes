@@ -1,0 +1,19 @@
+# pod-with-memory-exceed.yml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: stress
+  labels:
+   app: stress
+spec:
+  containers:
+    - name: networknuts-app
+      image: lovelearnlinux/stress:latest
+      resources:
+        limits:
+          memory: "250Mi"
+        requests:
+          memory: "150Mi"
+      command: ["stress"]
+      args: ["--vm", "1", "--vm-bytes", "275M", "--vm-hang", "1"]

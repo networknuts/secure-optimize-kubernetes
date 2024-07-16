@@ -1,0 +1,39 @@
+=== SECURITY CONTEXTS
+
+docker run --user=1001 lovelearnlinux/webserver:v1
+
+docker run --cap-add MAC_ADMIN lovelearnlinux/webserver:v1
+
+- security context can be configured at pod level or container level
+- if we configure security context at pod level it will inherit to all containers in the pod
+- if both, then container settings will take priority
+
+option - a - security context at pod level
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testpod
+spec:
+  securityContext:
+    runAsUser: 1000
+  containers:
+    - name: boxone
+      image: lovelearnlinux/webserver:v1
+
+
+option - b - security context at container level
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: testpod
+spec:
+  containers:
+    - name: boxone
+      image: lovelearnlinux/webserver:v1
+      securityContext:
+        runAsUser: 1000
+        capabilities:
+           add:: ["MAC_ADMIN"]
+

@@ -1,0 +1,60 @@
+=== ENCRYPTING DATA AT REST
+
+#1 - Generate a encryption key
+
+head -c 32 /dev/urandom | base64
+
+#2 - Create a encryption config file
+
+vim /etc/kubernetes/enc/enc.yaml
+
+---
+apiVersion: apiserver.config.k8s.io/v1
+kind: EncryptionConfiguration
+resources:
+  - resources:
+      - secrets
+    providers:
+      - aescbc:
+          keys:
+            - name: keyone
+              # See the following text for more details about the secret value
+              secret: <paste key generated in step one here>
+            - identity: {} # this fallback allows reading unencrypted secrets;
+                     # for example, during initial migration
+
+
+## save and exit
+
+#3 - Modify /etc/kubernetes/manifests/kube-apiserver.yaml, with these lines
+
+
+- --encryption-provider-config=/etc/kubernetes/enc/enc.yaml   #add this line
+- --encryption-provider-config-automatic-reload=true          #add this line
+
+
+volumeMounts:
+
+- name: enc                           # add this line
+  mountPath: /etc/kubernetes/enc      # add this line
+  readOnly: true                      # add this line
+
+volumes:
+
+- name: enc                             # add this line
+  hostPath:                             # add this line
+    path: /etc/kubernetes/enc           # add this line
+    type: DirectoryOrCreate             # add this line
+
+## save and exit
+
+#4 - Now create another secret and check inside etcd
+
+kubectl create secret generic second --from-literal password=redhat
+
+kubectl -n kube-system exec -it etcd-manager -- sh -c \
+"ETCDCTL_API=3 ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.crt \ ETCDCTL_CERT=/etc/kubernetes/pki/etcd/server.crt \
+ETCDCTL_KEY=/etc/kubernetes/pki/etcd/server.key \
+etcdctl --endpoints=https://127.0.0.1:2379 get /registry/secrets/default/second"
+
+

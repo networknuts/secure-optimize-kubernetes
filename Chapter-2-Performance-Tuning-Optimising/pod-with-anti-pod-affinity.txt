@@ -1,0 +1,32 @@
+# pod-with-anti-pod-affinity.yml
+#
+# 
+# First create a pod (nnweb) using
+# kubectl create -f pod-for-anti-affinity.yml
+#
+# Check the node where its running.
+#
+# Now we want this pod NEVER to be deployed on 
+# same node, where "nnweb" pod is running
+#
+apiVersion: v1
+kind: Pod
+metadata:
+  name: affthree
+  labels:
+   app: affthree
+spec:
+  containers:
+    - name: networknuts-app
+      image: lovelearnlinux/webserver:v1
+  affinity:
+#    podAntiAffinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - apptwo
+        topologyKey: "kubernetes.io/hostname"

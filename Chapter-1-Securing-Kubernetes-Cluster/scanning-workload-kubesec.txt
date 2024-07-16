@@ -1,0 +1,96 @@
+=== Check workload configuration online
+
+curl -sSX POST --data-binary @"your-deployment.yaml" https://v2.kubesec.io/scan
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@ using kubectl kubesec plugin @@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+STEP #1 
+
+=== A.  kubectl-kubesec plugin via krew
+
+Install Krew
+
+(
+  set -x; cd "$(mktemp -d)" &&
+  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+  KREW="krew-${OS}_${ARCH}" &&
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+  tar zxvf "${KREW}.tar.gz" &&
+  ./"${KREW}" install krew
+)
+
+Add in path
+# export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+Add in ~/.bashrc 
+# echo "export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"" >> ~/.bashrc
+
+Install kubesec-scan
+
+# kubectl krew install kubesec-scan
+
+=== B. kubectl-kubesec plugin via curl
+
+mkdir -p ~/.kube/plugins/scan && \
+curl -sL https://github.com/controlplaneio/kubectl-kubesec/releases/download/1.0.0/kubectl-kubesec_1.0.0_`uname -s`_amd64.tar.gz | tar xzvf - -C ~/.kube/plugins/scan
+mv ~/.kube/plugins/scan/scan ~/.kube/plugins/scan/kubectl-scan
+export PATH=$PATH:~/.kube/plugins/scan
+
+Add in ~/.bashrc
+echo "export PATH=$PATH:~/.kube/plugins/scan" >> ~/.bashrc
+
+
+STEP #2 
+
+Start using kubectl-kubesec 
+
+# kubectl kubesec-scan
+# kubectl kubesec-scan pod pod-name
+# kubectl kubesec-scan deployment deployment-name
+
+
+##### USE CASE------
+
+Create a pod with additional permissions
+
+vim excess.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: excess-perms
+spec:
+  containers:
+  - name: boxone
+    image: lovelearnlinux/webserver:v1
+    securityContext:
+       privileged: True
+       runAsUser: 0
+       capabilities:
+          add: ["CAP_SYS_ROOT"]
+
+
+### kubesec scan excess.yaml
+
+
+A Privileged Pod
+
+vim dangerous.yaml 
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo
+spec:
+  containers:
+  - name: sec-ctx-demo
+    image: busybox
+    command: [ "sh", "-c", "sleep 1h" ]
+    securityContext:
+      privileged: true
+
+
+       

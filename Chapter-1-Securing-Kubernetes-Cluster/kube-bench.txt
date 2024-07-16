@@ -1,0 +1,18 @@
+Using the kube-bench tool
+
+Now that we have a cluster and have already viewed the CIS Benchmark in a previous task, you can also use the kubebench tool from Aquasecurity which shows a text output of the issues followed by commands to run. This may allow an easier path to keeping your environment secure.
+
+Download the Aquasecurity kube-bench binary.
+
+# curl -L https://bit.ly/32BQF8G -o kube-bench_0.3.1_linux_amd64.deb
+
+Install and verify the binary is in your search path.
+
+# sudo apt install ./kube-bench_0.3.1_linux_amd64.deb -f
+# which kube-bench
+
+Run the kube-bench command to check
+
+# kube-bench master
+
+Compare the results with what you saw with the official CIS benchmark PDF we looked atin a previous exercise. They should be very similar to each other.

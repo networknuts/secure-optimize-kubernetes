@@ -1,0 +1,123 @@
+Search for charts in Artifact hub
+#helm search hub
+
+Search charts in added repositories
+#helm search repo
+
+Search charts containing apache keyword
+#helm search hub apache
+
+Get outout in tabular format
+#helm search hub apache --max-col-width=0
+
+Get outout in yaml/json with full results
+#helm search hub apache --output yaml
+
+Add bitnami chart repository
+#helm repo add bitnami https://charts.bitnami.com/bitnami
+
+Verify that chart is added
+#helm repo update
+#helm repo list
+
+Search for apache charts in the repository
+#helm search repo apache
+
+Check apache chart versions available
+#helm search repo apache --versions
+
+Get lot of details using helm show sub-commands
+#helm show chart bitnami/apache --version 11.0.3
+#helm show readme bitnami/apache --version 11.0.3
+#helm show values bitnami/apache --version 11.0.3
+#helm show all bitnami/apache --version 11.0.3
+
+Explore the values output
+#helm show values bitnami/apache --version 11.0.3
+
+Overriding default values by creating a values file - apache-custom.yaml
+
+vim apache-custom.yaml
+
+commonLabels: 
+  managed-by: helm
+nodeSelector: 
+  mem: large
+resources: 
+  limits: 
+    cpu: 200m 
+    memory: 200Mi 
+  requests: 
+    cpu: 100m 
+    memory: 100Mi
+service: 
+  type: NodePort
+
+Create a namespace for new helm application
+#kubectl create ns apache
+
+Install apache using helm with custom values in apache namespace
+#helm install apache bitnami/apache --values=apache-custom.yaml --namespace apache --version 11.0.3
+
+Inspect the application
+#helm list --namespace apache
+
+Get details about the helm application (release)
+#helm get hooks apache --namespace apache
+#helm get values apache --namespace apache
+#helm get manifest apache --namespace apache
+#helm get notes apache --namespace apache
+#helm get all apache --namespace apache
+#kubectl -n apache get pods --show-labels 
+#kubectl -n apache get svc --show-labels
+#kubectl -n apache describe svc apache
+
+Accessing Application
+#curl http://node-ip:node-port
+
+Upgrading Apache Release
+
+Modify the apache-custom.yaml file, add - replicaCount: 2
+
+commonLabels: 
+  managed-by: helm
+nodeSelector: 
+  mem: large
+resources: 
+  limits: 
+    cpu: 200m 
+    memory: 200Mi 
+  requests: 
+    cpu: 100m 
+    memory: 100Mi
+service: 
+  type: NodePort
+replicaCount: 2   ### add this line
+
+
+Upgrade application
+#helm upgrade apache bitnami/apache --values apache-custom.yaml -n apache --version 11.0.3
+
+Check the upgrade
+#kubectl -n apache get pods 
+
+
+Rollback Release
+
+#helm history apache -n apache
+#kubectl -n apache get secrets
+
+#helm -n apache get values apache --revision 1
+#helm -n apache get values apache --revision 2
+
+#helm rollback apache 1 -n apache
+#kubectl -n apache get pods
+
+Uninstalling
+
+#helm -n apache uninstall apache
+#helm list -n apache
+#kubectl delete ns apache
+
+
+

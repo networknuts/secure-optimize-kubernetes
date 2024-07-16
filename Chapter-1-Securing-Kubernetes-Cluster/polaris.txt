@@ -1,0 +1,59 @@
+
+==== POLARIS 
+
+Polaris is an open source policy engine for Kubernetes that validates and remediates resource configuration. 
+
+#1 - Install brew
+
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+(echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> ~/.bashrc
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+#2 - Install Packages
+sudo apt-get install build-essential
+source .bashrc
+
+#3 - Install brew
+brew install FairwindsOps/tap/polaris
+
+
+#4 - Usage
+polaris version
+polaris audit --audit-path /path-to-k8s-yaml-files/ --format=pretty
+polaris fix --files-path /path-to-k8s-yaml-files/ --checks=all
+
+
+
+====== POLARIS DASHBOARD
+
+From Workstation
+
+Step #1 - Install helm
+
+curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+sudo apt-get install apt-transport-https --yes
+echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update
+sudo apt-get install helm
+
+Step #2 - Add polaris stable helm chart
+
+helm repo add fairwinds-stable https://charts.fairwinds.com/stable
+
+Step #3 - Create Polaris in a demo namespace
+
+helm upgrade --install polaris fairwinds-stable/polaris --namespace demo --create-namespace
+
+Step #4 - Wait for pods to be in running state
+
+kubectl -n demo get pods
+kubectl -n demo get svc
+
+Step #5 - Do port forwarding
+
+kubectl port-forward --namespace demo svc/polaris-dashboard 8080:80
+
+Step #6 - Access Polaris dashboard 
+
+https://localhost:8080
+
