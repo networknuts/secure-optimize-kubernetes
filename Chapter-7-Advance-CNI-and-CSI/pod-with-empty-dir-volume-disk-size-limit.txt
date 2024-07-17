@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: empty-pod-size-limit
+spec:
+#  runtimeClassName: allsecure  #mention if you have runtime class defined
+  containers:
+  - image: lovelearnlinux/webserver:v1
+    imagePullPolicy: IfNotPresent
+    name: boxone
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 200m
+        memory: 200Mi
+    volumeMounts:
+    - mountPath: /var/www/html
+      name: demo-volume
+  volumes:
+  - name: demo-volume
+    emptyDir:
+      sizeLimit: 500Mi
+
+
+#####
+# When your pod is assigned to a node, it automatically creates an emptyDir volume. 
+# The volume lives on the host, outside of the container. 
+# By default, it stores data on your node’s backup mechanism (disk, network storage, SSD, etc.). 
+# In part, this is why emptyDir is so beneficial to use here – 
+# you don’t need to spin up additional resources to support the volume.
+
+# All containers running in a given pod will independently read/write data to the same emptyDir volume. 
+# The default mountPath for each pod on the node, has a root location of:
+
+# /var/lib/kubelet/pods/{podid}/volumes/kubernetes.io~empty-dir/
+
