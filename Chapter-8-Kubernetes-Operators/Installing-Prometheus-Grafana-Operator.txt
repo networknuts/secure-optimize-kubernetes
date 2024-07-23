@@ -1,0 +1,47 @@
+Installing Prometheus / Grafana Operator
+
+Step 1 - From workstation - Add bitnami repo for accessing 
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+
+Step 2 - Install Prometheus chart
+kubectl create ns monitoring
+helm install prometheus bitnami/kube-prometheus -n monitoring
+kubectl -n monitoring get pods #check for prometheus pods
+
+Step 3 - Install Grafana with NodePort service
+
+vim values.yaml
+
+grafana:
+  service:
+    type: NodePort
+
+
+helm install grafana -f values.yaml bitnami/grafana-operator -n monitoring
+kubectl -n monitoring get pods #check for grafana pods
+
+Step 4 - Get the service port
+kubectl -n monitoring get svc #check nodeport for grafana-service
+
+http://ip-of-server:node-port
+
+Step 4 - Get password
+username = admin
+kubectl -n monitoring get secret secret-name -o yaml
+
+#get the password value and decode it
+
+
+login and select "data-source"
+
+Need service name of prometheus
+DNS name of service - <nameofservice.namespace-name.svc.cluster.local:port>
+kubectl get svc #check prometheus-kube-prometheus-prometheus
+ 
+
+URL - http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
+
+click - save and test
+
+Get nodeexporter-full dashboard ID
