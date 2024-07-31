@@ -1,10 +1,35 @@
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
-  name: my-pdb
-  namespace: my-namespace
+  name: nginx-pdb
 spec:
-  minAvailable: 2
+  minAvailable: 4
   selector:
     matchLabels:
-    app: my-deployment
+    app: nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+
+#kubectl apply -f filename.yaml
+#kubectl get pdp
+#kubectl describe pdp nginx-pdb
+#kubectl drain node 
+#check what happens
