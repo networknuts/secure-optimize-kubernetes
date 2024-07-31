@@ -6,7 +6,7 @@ spec:
   minAvailable: 4
   selector:
     matchLabels:
-    app: nginx
+      app: nginx
 ---
 apiVersion: apps/v1
 kind: Deployment
