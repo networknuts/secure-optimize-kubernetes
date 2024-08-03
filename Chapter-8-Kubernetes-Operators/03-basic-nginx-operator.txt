@@ -1,0 +1,27 @@
+=== SAMPLE HELM BASED OPERATOR
+
+Step 01-Install Docker and authenticate with docker login
+
+Step 02- Create project directory
+mkdir nginx-operator
+cd nginx-operator
+operator-sdk init --domain lovelearnlinux --plugins helm
+
+Step 03- Create sample nginx API using helm chart boilerplate
+operator-sdk create api --group demo --version v1alpha1 --kind Nginx
+
+Step 04 - Build and push your operator image
+
+make docker-build docker-push IMG="lovelearnlinux/nginx-operator:v0.0.1"
+
+Step 05 - OLM Deployment
+
+operator-sdk olm install
+
+Step 06 - Bundle operator and push
+
+make bundle IMG="lovelearnlinux/nginx-operator:v0.0.1"
+make bundle-build bundle-push IMG="lovelearnlinux/nginx-operator:v0.0.1"
+
+Step 07 - Run your bundle
+operator-sdk run bundle lovelearnlinux/nginx-operator-bundle:v0.0.1
