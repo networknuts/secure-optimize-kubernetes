@@ -5,15 +5,25 @@ Welcome to the "Secure & Optimize Kubernetes" repository! This repository is a c
 
 ## Table of Contents
 
+Some text for chapter 1 here
 1. [Introduction](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/01-introduction)
+Some text for chapter 2 here
 2. [Kubernetes Security](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/02-kubernetes-security)
+Some text for chapter 3 here
 3. [Network Policies](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/03-network-policies)
+Some text for chapter 4 here
 4. [Authentication & Authorization](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/04-authentication-authorization)
+Some text
 5. [Secret Management](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/05-secret-management)
+some text
 6. [Pod Security Policies](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/06-pod-security-policies)
+some text
 7. [Resource Quotas & Limits](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/07-resource-quotas-limits)
+some text
 8. [Logging & Monitoring](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/08-logging-monitoring)
+some text
 9. [Backup & Disaster Recovery](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/09-backup-disaster-recovery)
+some text
 10. [Best Practices](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/10-best-practices)
 
 ## How to Use
