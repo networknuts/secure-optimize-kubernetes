@@ -22,7 +22,7 @@ Kubernetes Networking. Understanding Kubernetes IP Ranges. Kubernetes network mo
 8. [Kubernetes Operators](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-8-Kubernetes-Operatorss)
 sUnderstanding Kubernetes Operators. Installing application using operator on Kubernetes cluster. Creating sample Kubernetes operator. 
 9. [Kubevirt](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-9-Kubevirt)
-Kubevirt with Kubernetes. Running virtal machines on Kubernetes cluster using kubevirt.
+Kubevirt with Kubernetes. Running virtual machines on Kubernetes cluster using kubevirt.
 ## How to Use
 
 Each chapter in this repository provides detailed information and practical examples in sequential way on securing and optimizing various aspects of Kubernetes. Follow the links above to explore each chapter.
