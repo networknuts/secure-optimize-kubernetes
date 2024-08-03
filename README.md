@@ -25,7 +25,7 @@ some text
 9. [Backup & Disaster Recovery](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/09-backup-disaster-recovery)
 some text
 10. [Best Practices](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/10-best-practices)
-
+some text 
 ## How to Use
 
 Each chapter in this repository provides detailed information and practical examples on securing and optimizing various aspects of Kubernetes. Follow the links above to explore each chapter.
