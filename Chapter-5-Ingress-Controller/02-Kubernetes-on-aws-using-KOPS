@@ -70,3 +70,6 @@ kops create cluster --state "s3://nn-k8s-state-store"  \
 13. Access cluster
   kubectl get nodes
   kubectl -n kube-system get pods
+
+14. Delete the cluster
+  kops delete cluster --state "s3://nn-k8s-state-store" --name test.aloksrivastava.name --yes
