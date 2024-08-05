@@ -1,6 +1,6 @@
 1. Create a deployment with LoadBalancer Service
 
-vim deploymentone.yaml
+vim deployment-1.yaml
 
 ---
 apiVersion: apps/v1
