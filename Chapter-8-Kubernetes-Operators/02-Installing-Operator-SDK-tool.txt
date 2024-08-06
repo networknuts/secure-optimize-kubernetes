@@ -1,7 +1,7 @@
 INSTALLING OPERATOR SDK TOOL
 ****************************
 
-Step01 === install golang
+Step01 === Install golang
 
 rm -rf /usr/local/go
 wget https://go.dev/dl/go1.21.12.linux-amd64.tar.gz
@@ -9,7 +9,7 @@ tar -C /usr/local -xzf go1.21.12.linux-amd64.tar.gz
 export PATH=$PATH:/usr/local/go/bin
 go version
 
-Step02 === install sdk - https://sdk.operatorframework.io/docs/installation/
+Step02 === Install sdk - https://sdk.operatorframework.io/docs/installation/
 
 export ARCH=$(case $(uname -m) in x86_64) echo -n amd64 ;; aarch64) echo -n arm64 ;; *) echo -n $(uname -m) ;; esac)
 export OS=$(uname | awk '{print tolower($0)}')
