@@ -8,7 +8,7 @@ metadata:
    app: stress
 spec:
   containers:
-    - name: networknuts-app
+    - name: boxone
       image: lovelearnlinux/stress:latest
       resources:
         limits:

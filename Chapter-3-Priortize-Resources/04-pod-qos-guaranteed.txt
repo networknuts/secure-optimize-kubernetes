@@ -6,7 +6,7 @@ metadata:
    app: guaranteed
 spec:
   containers:
-    - name: networknuts-app
+    - name: boxone
       image: lovelearnlinux/webserver:v1
       resources:
         limits:
