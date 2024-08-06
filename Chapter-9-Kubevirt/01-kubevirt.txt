@@ -11,7 +11,7 @@ kubectl -n kubevirt wait kv kubevirt --for condition=Available
 
 
 
-Step #2 - Check
+Step #2 - Check status
 
 kubectl -n kubevirt get all
 
