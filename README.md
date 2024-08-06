@@ -13,14 +13,16 @@ Control pod scheduling using node-selectors, affinity/anti-affinity, taints & to
 Understand importance of "quality of service" for applications. Configure applications in besteffort, burstable and guaranteed quality of service. Understand relation between pod eviction and qos. Learn to install metric server. Configure priority classes for critical applications. Understand topology spread. Namespaces with resource quota and limit ranges configurations.
 4. [Service Mesh](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-4-Service-Mesh)
 Importance of Service Mesh in a kubernetes cluster. Installing Istio as service mesh. Running applicatin with service mesh. Controlling traffic using routing policies.
-5. [Helm Charts](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-6-Helm-Chartst)
+5. [Ingress Controller](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-5-Ingress-Controller)
+Understanding Ingress-controller. Installing and using nginx ingress controller with Kubernetes cluster.
+6. [Helm Charts](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-6-Helm-Chartst)
 Understand Helm as a package manager for Kubernetes. Installing and integrating helm with Kubernetes. Running applications using helm. Upgrading applications. Rollback application. Removing application using helm. Creating custom helm charts. 
-6. [CNI & CSI](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-7-Advance-CNI-and-CSI)
+7. [CNI & CSI](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-7-Advance-CNI-and-CSI)
 Kubernetes Networking. Understanding Kubernetes IP Ranges. Kubernetes network model. DNS in Kubernetes. CNI plugins. Understanding storage. Implementing shared storage and accessing it from a Kubernetes application. Storage Classes. 
-7. [Kubernetes Operators](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-8-Kubernetes-Operatorss)
+8. [Kubernetes Operators](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-8-Kubernetes-Operatorss)
 sUnderstanding Kubernetes Operators. Installing application using operator on Kubernetes cluster. Creating sample Kubernetes operator. 
-8. [Kubevirt](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-9-Kubevirt)
-Kubevirt with Kubernetes. Running virtal machines on Kubernetes cluster using kubevirt.
+9. [Kubevirt](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-9-Kubevirt)
+Kubevirt with Kubernetes. Running virtual machines on Kubernetes cluster using kubevirt.
 ## How to Use
 
 Each chapter in this repository provides detailed information and practical examples in sequential way on securing and optimizing various aspects of Kubernetes. Follow the links above to explore each chapter.
