@@ -26,7 +26,7 @@ Search for apache charts in the repository
 Check apache chart versions available
 #helm search repo apache --versions
 
-Get lot of details using helm show sub-commands
+Get lot of details using helm show sub-commands (use the latest version)
 #helm show chart bitnami/apache --version 11.0.3
 #helm show readme bitnami/apache --version 11.0.3
 #helm show values bitnami/apache --version 11.0.3
