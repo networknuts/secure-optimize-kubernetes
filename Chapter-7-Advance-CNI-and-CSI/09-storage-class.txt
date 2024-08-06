@@ -1,6 +1,6 @@
 Storage Class with NFS
 
-1 - configure nfs server (10.0.0.99)
+1 - Configure nfs server (10.0.0.99) - your IP can be different
 
 apt install nfs-kernel-server
 
@@ -14,11 +14,11 @@ echo "/k8sdata *(rw,sync,no_subtree_check)" >> /etc/exports
 exportfs -a
 exportfs -r
 
-2 - check from manager / nodes
+2 - Check from manager / nodes
 apt update && apt install nfs-common -y
 showmount -e ip-address-nfs-server
 
-3. add nfs provisioner
+3. Add nfs provisioner
 
 # install helm -
 curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
@@ -46,7 +46,7 @@ kubectl get storageclass
 
 ####
 
-4. create pvc for first application
+4. Create pvc for first application
 
 ---
 apiVersion: v1
