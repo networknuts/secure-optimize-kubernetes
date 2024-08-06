@@ -1,28 +1,23 @@
 Step #1 Download Istio
 
-curl -L https://istio.io/downloadIstio | sh -
-
-Step #2 Move into the istio directory
-
+curl -L https://git.io/getLatestIstio | sh -
+cd istio-1.22.3/
 export PATH=$PWD/bin:$PATH
 
-Step #3 - Run pre-check
-
+Step #2 - Perform Pre-checks
+istioctl version
 istioctl x precheck
 
-Step #4 Install Istio
-
+Step #3 - Install Istio
 istioctl install --set profile=demo -y
-kubectl -n istio-system get all
-
-Step #5 Verify Istio Installation
-
+kubectl -n istio-system get pods
 istioctl verify-install
 
-Step #6 Add add-ons
-
+Step #4 - Install Addons
 kubectl apply -f ./samples/addons
-
-
+kubectl api-resources | grep -i istio
+kubectl get crd | grep -i istio
+kubectl get crd gateways.gateway.networking.k8s.io &> /dev/null || \
+  { kubectl kustomize "github.com/kubernetes-sigs/gateway-api/config/crd/experimental?ref=v1.1.0" | kubectl apply -f -; }
 
 
