@@ -14,6 +14,7 @@ growth: Percentage of traffic growth that we expect in a few minutes (say next 5
 
 So the HPA would look something like this:
 
+---
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
