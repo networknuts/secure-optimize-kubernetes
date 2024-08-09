@@ -1,3 +1,7 @@
+AppArmor is common Linux security module hich Kubernetes supports to limit container workload exposure to the kernel
+Apparmor profile need to be loaded on worker / node where you want the additional security to be implemented
+
+
 Step #1 - Login on a kubernetes nodes and check status of apparmor
 
 cat /sys/module/apparmor/parameters/enabled
