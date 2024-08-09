@@ -1,6 +1,9 @@
-Using the kube-bench tool
+Using the kube-bench tool for scanning your kubenertes cluster.
+<perform on manager / control-plane>
 
-Now that we have a cluster and have already viewed the CIS Benchmark in a previous task, you can also use the kubebench tool from Aquasecurity which shows a text output of the issues followed by commands to run. This may allow an easier path to keeping your environment secure.
+Now that we have a cluster and have already viewed the CIS Benchmark in a previous task, 
+you can also use the kubebench tool from Aquasecurity which shows a text output of the issues followed by commands to run. 
+This may allow an easier path to keeping your environment secure.
 
 Download the Aquasecurity kube-bench binary.
 
