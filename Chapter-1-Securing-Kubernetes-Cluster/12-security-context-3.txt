@@ -1,3 +1,6 @@
+A security context defines privilege and access control settings for a Pod or Container. 
+Here security context is defined at pod level
+
 ---
 apiVersion: apps/v1
 kind: Deployment
