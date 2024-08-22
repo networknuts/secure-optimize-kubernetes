@@ -1,5 +1,6 @@
 
 #Dive is a tool for exploring a docker image, layer contents and more.
+#Generally used to explore the contents of the container image
 
 # Installation:
 

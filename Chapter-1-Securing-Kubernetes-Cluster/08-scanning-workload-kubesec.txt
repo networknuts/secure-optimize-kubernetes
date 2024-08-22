@@ -1,4 +1,7 @@
-=== Check workload configuration online
+=== Check workload configuration online using Kubesec
+
+Kubesec quantifies risk for Kubernetes resources by validating the configuration files 
+and manifest files used for Kubernetes deployments and operations.
 
 curl -sSX POST --data-binary @"your-deployment.yaml" https://v2.kubesec.io/scan
 

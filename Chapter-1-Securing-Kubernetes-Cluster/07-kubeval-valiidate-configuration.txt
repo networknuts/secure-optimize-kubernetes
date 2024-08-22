@@ -1,8 +1,8 @@
-=== VALIDATING YAML
+=== VALIDATING YAML for industry best practices in code
 
 1. Kubeval
 
-option: a - Install locally
+option: a - Install locally 
 
 	vim kubeval-install.sh
 

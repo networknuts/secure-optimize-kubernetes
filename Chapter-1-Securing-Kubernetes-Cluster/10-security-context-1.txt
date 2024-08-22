@@ -1,4 +1,5 @@
-=== SECURITY CONTEXTS
+=== SECURITY CONTEXTS - A security context defines privilege and access control settings for a Pod or Container. 
+
 
 docker run --user=1001 lovelearnlinux/webserver:v1
 

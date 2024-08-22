@@ -1,7 +1,6 @@
 
-==== POLARIS 
-
-Polaris is an open source policy engine for Kubernetes that validates and remediates resource configuration. 
+==== POLARIS an open source policy engine for Kubernetes that validates and remediates resource configuration. 
+<on manager / workstation - where you yaml files are>
 
 #1 - Install brew
 

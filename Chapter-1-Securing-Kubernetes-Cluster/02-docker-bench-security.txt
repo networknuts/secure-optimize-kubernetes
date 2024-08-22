@@ -1,12 +1,14 @@
-Docker Bench Security
+Docker Bench Security - Scan container engine (docker) for vulnerabilities
+<Perform on all machines of the cluster>
 
-Clone the git repository and run the docker-bench-security tool against your cluster. Therewill be quite a bit of output.
+Clone the git repository and run the docker-bench-security tool against your cluster. 
+Therewill be quite a bit of output.
 
 # git clone https://github.com/docker/docker-bench-security.git
 # cd docker-bench-security
 # ./docker-bench-security.sh
 
-Use your Linux skills to pass some tests.
+You have to use your Linux skills to pass some tests.
 
 # apt install auditd
 # systemctl start auditd

@@ -1,4 +1,5 @@
-## INSTALL TRIVY
+## INSTALL TRIVY to scan vulnerabilities in the images before you run them in production
+
 
 sudo apt-get install wget apt-transport-https gnupg lsb-release
 wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -

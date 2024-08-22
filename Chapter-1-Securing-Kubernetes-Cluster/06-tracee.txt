@@ -1,8 +1,7 @@
---- Install Helm
+--- Install Helm first
+--- Install tracee on kubernetes cluster - Tracee is a runtime security and observability tool
+<on manager/control-plane>
 
-
-
---- Install tracee on kubernetes cluster
 
 helm repo add aqua https://aquasecurity.github.io/helm-charts/
 helm repo update

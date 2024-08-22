@@ -7,7 +7,8 @@ Open a local browser and visit - https://www.cisecurity.org/cis-benchmarks/
 Scroll to expand information on Kubernetes.
 Among the expanded list you may note that only one version is considered current. Select the current benchmark
 
-Fill out your contact information and accept the terms. An email will be sent to the email given in a minute or two. Inside the email is a link to Access the PDFs, which willopen a website to download the freely available PDFs.
+Fill out your contact information and accept the terms. An email will be sent to the email given in a minute or two. 
+Inside the email is a link to Access the PDFs, which willopen a website to download the freely available PDFs.
 
 
 #### CIS Assessment Tool
@@ -16,14 +17,19 @@ Open local browser and navigate to the CIS homepage, https://cisecurity.org
 
 Select theCybersecurity Tools tab.
 
-Scroll down and take a look at the options available. On the right of the page you cansee a color code for resources that are free, and others are paid.
+Scroll down and take a look at the options available. 
+On the right of the page you cansee a color code for resources that are free, and others are paid.
 
-Select the CIS-CAT Lite automated assessment tool. We will test Ubuntu, both to ensurewe are secure as well as to see a sample of what the assessment does and eventuallyreturns. Fill out the form on the right and submit. This will cause an email to be sent to you.
+Select the CIS-CAT Lite automated assessment tool. 
+We will test Ubuntu, both to ensurewe are secure as well as to see a sample of what the assessment does and eventuallyreturns. 
+Fill out the form on the right and submit. This will cause an email to be sent to you.
 
-Inside the email you will eventually receive you will find the option to download version3 or version 4. Instead of clicking on the green button, hover with the mouse overversion v4 and copy the link. Then log into your exercise node and use the
+Inside the email you will eventually receive you will find the option to download version3 or version 4. 
+Instead of clicking on the green button, hover with the mouse overversion v4 and copy the link. Then log into your exercise node and use the
 wget command to retrieve the file.
 
-As this manner of download creates a long and difficult file name you can use the mvcommand and tab to rename it to something easier, like CIS-Cat.zip.
+As this manner of download creates a long and difficult file name you can use the mvcommand and tab to 
+rename it to something easier, like CIS-Cat.zip.
 
 To extract the files we may first have to install the unzip command.
 # sudo apt-get update; sudo apt-get install unzip

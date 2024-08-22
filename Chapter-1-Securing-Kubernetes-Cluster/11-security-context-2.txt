@@ -1,3 +1,7 @@
+A security context defines privilege and access control settings for a Pod or Container. 
+Here is a good yaml where user / group is explicitly defined in yaml and privilege escalation
+is also denied.
+
 ---
 apiVersion: v1
 kind: Pod
