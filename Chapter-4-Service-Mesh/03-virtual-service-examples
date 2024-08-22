@@ -1,0 +1,125 @@
+Example #1
+Virtual Service to route all http traffic for my-app service to version 1
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app-v1
+spec:
+  hosts:
+  - myapp.abc.com
+  http:
+  - name: "my-app-v1"
+    route:
+    - destination:
+        host: service-name <my-app.my-ns.svc.cluster.local>
+        subset: v1  #version of service
+
+
+Example #2
+Virtual Service to route 80% of traffic to v1 and 20% to v2
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app-v1-v2
+spec:
+  hosts:
+  - myapp.abc.com
+  gateways:
+  - my-app-gateway
+  http:
+  - route:
+    - destination:
+        host: service-name <my-app.my-ns.svc.cluster.local>
+        subset: v1  #version of service
+        weight: 80
+  - route:
+    - destination: 
+        host: service-name
+        subset: v2
+        weight: 20
+
+Example #3 
+Virtual Service to route firefox users to v2 and rest to v1
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app
+spec:
+  hosts:
+  - myapp.abc.com
+  http:
+  - match
+    - headers:
+        user-agent:
+          regex: '.*Firefox.*'
+    route:
+    - destination:
+        host: service-name <my-app.my-ns.svc.cluster.local>
+        subset: v2  #version of service
+       
+  - route:
+    - destination: 
+        host: service-name
+        subset: v1
+       
+
+Example #4
+Virtual Service which will inject a delay of 5 seconds for 80% of traffic to v2
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app
+spec:
+  hosts:
+  - myapp.abc.com
+  http:
+  - fault:
+      delay:
+        fixedDelay: 5s
+        percentage:
+          value: 80
+    route:
+    - destination:
+        host: service-name <my-app.my-ns.svc.cluster.local>
+        subset: v2  #version of service
+       
+Example #5
+Virtual Service which will attempt 3 times and each attempt is considered as failure if it takes more than 2 seconds
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app
+spec:
+  hosts:
+  - "*"
+  http:
+  - route:
+      - destination:
+        host: service-name <my-app.my-ns.svc.cluster.local>
+        subset: v2  #version of service
+      retries:
+        attempts: 3
+        perTryTimeout: 2s
+
+
+Example #6
+Virtual Service which will timeout if application takes more than 10 seconds to respond
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app
+spec:
+  hosts:
+  - "*"
+  http:
+  - route:
+      - destination:
+        host: service-name <my-app.my-ns.svc.cluster.local>
+        subset: v2  #version of service
+      timeout: 10s
