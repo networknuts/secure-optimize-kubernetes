@@ -33,12 +33,12 @@ spec:
     - destination:
         host: service-name <my-app.my-ns.svc.cluster.local>
         subset: v1  #version of service
-        weight: 80
+      weight: 80
   - route:
     - destination: 
         host: service-name
         subset: v2
-        weight: 20
+      weight: 20
 
 Example #3 
 Virtual Service to route firefox users to v2 and rest to v1
