@@ -1,0 +1,23 @@
+
+Virtual Service to route 80% of traffic to v1 and 20% to v2
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app-v1-v2
+spec:
+  hosts:
+  - myapp.abc.com
+  gateways:
+  - my-app-gateway
+  http:
+  - route:
+    - destination:
+        host: service-name <my-app.my-ns.svc.cluster.local>
+        subset: v1  #version of service
+      weight: 80
+  - route:
+    - destination: 
+        host: service-name
+        subset: v2
+      weight: 20

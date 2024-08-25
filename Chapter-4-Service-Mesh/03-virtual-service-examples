@@ -1,21 +1,3 @@
-Example #1
-Virtual Service to route all http traffic for my-app service to version 1
-
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: my-app-v1
-spec:
-  hosts:
-  - myapp.abc.com
-  http:
-  - name: "my-app-v1"
-    route:
-    - destination:
-        host: service-name <my-app.my-ns.svc.cluster.local>
-        subset: v1  #version of service
-
-
 Example #2
 Virtual Service to route 80% of traffic to v1 and 20% to v2
 
