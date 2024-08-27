@@ -1,0 +1,53 @@
+## Need to Configure Gateway for TLS
+
+Step #1 - Generate application key and certicate
+
+openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes -keyout application-key.pem -out application-cert.pem -subj "/CN=test.aloksrivastava.name" -addext "subjectAltName=DNS:test.aloksrivastava.name"
+
+
+Step #2 - Store them as a secret in istio-system namespace
+
+kubectl create -n istio-system secret tls application-tls-secret --key application-key.pem --cert application-cert.pem
+
+
+Step #3 - Re-configure your gateway to use those credentials
+
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: application-gateway-tls
+  namespace: application
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    hosts:
+    - test.aloksrivastava.name
+    tls:
+      mode: SIMPLE
+      credentialName: application-tls-secret
+
+
+Step #4 - Re-configure your virtual-service to use new gateway
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: application-frontend
+  namespace: application
+spec:
+  hosts:
+  - test.aloksrivastava.name
+  gateways:
+  - application-gateway-tls
+  http:
+  - route:
+    - destination:
+        host: frontend-external
+
+
+

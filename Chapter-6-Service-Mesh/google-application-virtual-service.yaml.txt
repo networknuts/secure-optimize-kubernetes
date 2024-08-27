@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: application-frontend
+  namespace: application
+spec:
+  hosts:
+  - test.aloksrivastava.name
+  gateways:
+  - application-gateway
+  http:
+  - route:
+    - destination:
+        host: frontend-external
+
+
+## Now create a CNAME route53 entry in DNS for test.aloksrivastava.name pointing to istio-ingress-address
