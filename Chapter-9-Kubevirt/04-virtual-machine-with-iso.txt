@@ -1,0 +1,126 @@
+== CDI
+
+export VERSION=$(curl -s https://api.github.com/repos/kubevirt/containerized-data-importer/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+
+kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-operator.yaml
+
+kubectl create -f https://github.com/kubevirt/containerized-data-importer/releases/download/$VERSION/cdi-cr.yaml
+
+
+kubectl get ns
+kubectl -n cdi get all
+kubectl -n cdi get svc ## check for upload proxy - this can be used to upload iso
+
+kubectl -n cdi port-forward service cdi-uploadproxy 18443:443
+
+### Now you should have ISO with you, like ubuntu server 
+
+### Should have a storage class configured to store ISO
+Storageclassname - nfs-client
+
+### Create a PVC for uploading ISO which will use that storage class - vim storage-needs.yaml
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: myiso
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: nfs-client
+
+# kubectl apply -f storage-needs.yaml 
+
+### Now upload the iso in the PVC - myiso
+
+kubectl -n cdi port-forward service cdi-uploadproxy 8443:443
+
+<from second terminal - upload the iso>
+
+cd .krew/
+
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+kubectl virt image-upload pvc myclaim --no-create --uploadproxy-url=https://127.0.0.1:8443 --image-path=/root/ubuntu-20.04.6-live-server-amd64.iso --insecure --wait-secs=240
+
+### Create another PVC for VM disk, add in same file - vim storage-needs.yaml
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mydisk
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-client
+  resources:
+    requests:
+      storage: 6Gi
+
+# kubectl apply -f storage-needs.yaml
+# kubectl get pvc
+
+### Now use the ubuntu-vm.yaml to create virtual-machine - vim ubuntu-vm.yaml
+
+---
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  generation: 1
+  labels:
+    kubevirt.io/os: linux
+  name: ubuntuserver
+spec:
+  running: true
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: vm1
+    spec:
+      domain:
+        cpu:
+          cores: 1
+        devices:
+          disks:
+          - bootOrder: 2
+            cdrom:
+              bus: sata
+            name: cdromiso
+          - disk:
+              bus: virtio
+            name: harddrive
+            bootOrder: 1
+          - cdrom:
+              bus: sata
+              readonly: true
+            name: virtio-drivers
+        machine:
+          type: q35
+        resources:
+          requests:
+            memory: 1024M
+      volumes:
+      - name: cdromiso
+        persistentVolumeClaim:
+          claimName: myclaim
+      - name: harddrive
+        persistentVolumeClaim:
+          claimName: mydisk
+      - name:  virtio-drivers
+        containerDisk:
+          image: kubevirt/virtio-container-disk
+          imagePullPolicy: Never
+
+## FILE ENDS HERE
+
+# kubectl apply -f ubuntu-vm.yaml
+# kubectl get vm
+
+# kubectl virt console vm-name
+
+
