@@ -1,0 +1,76 @@
+
+
+Step #1 - Create a ISCSI Target (our storage IP is - 10.0.0.199) 
+
+apt install tgt targetcli-fb
+
+# a good reference point - 
+
+#https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/storage_administration_guide/online-storage-management#target-setup-configure-luns
+
+USE - targetcli - to create LUN's
+    - change default port to 3360
+    - stop and disable firewall - systemctl stop ufw
+
+# FROM Cluster - check that ISCSI is visible
+
+#1 - apt install open-iscsi
+#2 - sudo vim /etc/iscsi/initiatorname.iscsi
+     <change to iqn name which you have supplied in ACL on target>
+#3 - sudo systemctl restart iscsid.service
+#4 - sudo iscsiadm -m discovery -t st -p 10.0.0.199:3360
+
+<repeat these 4 steps on all nodes>
+
+
+Step #2 - PV using ISCSI
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: iscsi-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+  - ReadWriteOnce
+  iscsi:
+    targetPortal: <ip address of iscsi server>:3360
+    iqn: <target iqn of the iscsi server>
+    lun: 0
+    fsType: 'ext4'
+    readOnly: false
+
+
+Step #3 - PVC using PV
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: iscsipvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+
+Step #4 - Create application that uses PVC
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: iscsipod
+spec:
+  containers:
+  - name: iscsi
+    image: nginx
+    volumeMounts:
+    - mountPath: "/var/www/html"
+      name: iscsivol
+  volumes:
+  - name: iscsivol
+    persistentVolumeClaim:
+      claimName: iscsipvc
+
