@@ -37,7 +37,7 @@ sudo systemctl restart containerd
 3. Configure kubelet to use containerd as runtime
 
 vim /var/lib/kubelet/kubeadm-flags.env
---container-runtime-endpoint=unix://run/containerd/containerd.sock
+--container-runtime-endpoint=unix:///run/containerd/containerd.sock
 
 kubectl edit no node-name
 
