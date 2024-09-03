@@ -1,0 +1,62 @@
+#1 
+
+Clusterwide /mesh wide mTLS in STRICT mode (default is permissive mode)
+
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default # good practice to name it default, if you are using cluster-wide
+  namespace: istio-system
+spec:
+  mtls:
+    mode: STRICT
+
+
+#2
+
+Namespace wide mTLS in STRICT mode
+
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: ecom-app 
+  namespace: webapp
+spec:
+  mtls:
+    mode: STRICT
+
+
+#3
+
+Workload specific in a namespace
+
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: selective-app
+  namespace: webapp
+spec:
+  selector:
+     matchLabels:
+       your-key: your-value
+  mtls:
+    mode: STRICT
+
+#4
+
+Override mTLS for specfic workload
+
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: selective-allow
+  namespace: webapp
+spec:
+  selector:
+     matchLabels:
+       your-key: your-value
+  mtls:
+    mode: PERMISSIVE
+
+
+

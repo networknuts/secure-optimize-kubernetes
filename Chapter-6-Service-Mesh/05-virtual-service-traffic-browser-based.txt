@@ -1,0 +1,24 @@
+
+Virtual Service to route firefox users to v2 and rest to v1
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app
+spec:
+  hosts:
+  - myapp.abc.com
+  http:
+  - match:
+    - headers:
+        user-agent:
+          regex: '.*Firefox.*'
+    riute:
+    - destination:
+        host: service-name <my-app.my-ns.svc.cluster.local>
+        subset: v2  #version of service
+       
+  - route:
+    - destination: 
+        host: service-name
+        subset: v1

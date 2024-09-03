@@ -1,0 +1,87 @@
+#1
+
+Gateway that manages in/out traffic for abc.com on port 80
+
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: my-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      name: http
+      number: 80
+      protocol: HTTP
+    hosts:
+    - abb.com
+
+#2
+Gateway that manages in/out traffic for abc.com on port 80 and 443 (TLS/SSL)
+
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: my-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      name: http
+      number: 80
+      protocol: HTTP
+    hosts:
+    - abc.com
+  - port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    hosts:
+    - abc.com
+    tls:
+      mode: SIMPLE
+      credentialName: secretname-myapp
+
+## file ends here
+## Must create a secret with certificate before you create gateway
+
+kubectl -n istio-system create secret tls secretname-myapp --key=cert.key --cert=cert.crt
+
+
+
+#3
+Gateway that manage in/out traffic or abc.com on port 443 with mutual TLS and redirect HTTP to HTTPS
+
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: my-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      name: http
+      number: 80
+      protocol: HTTP
+    hosts:
+    - abc.com
+    tls:
+      httpsRedirect: true #do 301 redirect for http requests
+  - port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    hosts:
+    - abc.com
+    tls:
+      mode: MUTUAL
+      serverCertificate: /etc/istio/ingressgateway-myapp-certs/tls.crt
+      privateKey: /etc/istio/ingressgateway-myapp-certs/tls.key
+      caCertificates: /etc/istio/ingressgateway-myapp-ca-certs/ca.pem
+
+
+
+

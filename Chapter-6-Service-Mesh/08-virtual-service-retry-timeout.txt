@@ -1,0 +1,15 @@
+Virtual Service which will timeout if application takes more than 10 seconds to respond
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app
+spec:
+  hosts:
+  - "*"
+  http:
+  - route:
+      - destination:
+        host: service-name <my-app.my-ns.svc.cluster.local>
+        subset: v2  #version of service
+      timeout: 10s

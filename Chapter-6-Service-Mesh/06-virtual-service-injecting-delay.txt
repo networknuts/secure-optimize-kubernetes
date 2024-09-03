@@ -1,0 +1,21 @@
+
+Virtual Service which will inject a delay of 5 seconds for 80% of traffic to v2
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app
+spec:
+  hosts:
+  - myapp.abc.com
+  http:
+  - fault:
+      delay:
+        fixedDelay: 5s
+        percentage:
+          value: 80
+    route:
+    - destination:
+        host: service-name <my-app.my-ns.svc.cluster.local>
+        subset: v2  #version of service
+       

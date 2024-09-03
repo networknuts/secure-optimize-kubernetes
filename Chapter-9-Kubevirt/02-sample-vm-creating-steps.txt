@@ -1,0 +1,110 @@
+#########
+# Setup #
+#########
+
+### A runnnig Kubernetes cluster with machines having VT enabled
+
+# See https://kubevirt.io/user-guide/operations/installation/#requirements for the list of requirements
+
+kubectl create namespace vms
+
+### Install `kubectl` Krew Plugin Manager from https://github.com/kubernetes-sigs/krew
+
+step #1 - run this command
+
+(
+  set -x; cd "$(mktemp -d)" &&
+  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+  KREW="krew-${OS}_${ARCH}" &&
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+  tar zxvf "${KREW}.tar.gz" &&
+  ./"${KREW}" install krew
+)
+
+
+step #2 - update the path
+
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+step #3 - verify installation
+
+kubectl krew
+
+### Install virt
+
+kubectl krew install virt
+
+export VERSION=$(curl -s \
+    https://api.github.com/repos/kubevirt/kubevirt/releases \
+    | grep tag_name \
+    | grep -v -- '-rc' \
+    | sort -r \
+    | head -1 \
+    | awk -F': ' '{print $2}' \
+    | sed 's/,//' \
+    | xargs)
+
+kubectl apply \
+    --filename https://github.com/kubevirt/kubevirt/releases/download/$VERSION/kubevirt-operator.yaml
+
+
+# Execute the command that follows only if nested virtualization is not enabled
+
+kubectl --namespace kubevirt \
+    create configmap kubevirt-config \
+    --from-literal debug.useEmulation=true
+
+kubectl apply \
+    --filename https://github.com/kubevirt/kubevirt/releases/download/$VERSION/kubevirt-cr.yaml
+
+kubectl --namespace kubevirt get all
+
+####################################################
+# Create And Manage Virtual Machines With KubeVirt #
+####################################################
+
+cat vm.yaml
+
+kubectl -n vms apply -f vm.yaml
+
+kubectl -n vms get vms
+
+kubectl -n vms get vmis
+
+kubectl -n vms delete vmi my-vm
+
+kubectl -n vms get vmis
+
+kubectl get pods,vmis --all-namespaces
+
+kubectl get crds | grep kubevirt
+
+virtctl --help
+
+kubectl virt --help
+
+kubectl virt console my-vm
+
+kubectl -n vms virt console my-vm
+
+ls -l /
+
+ps aux
+
+exit
+
+# In a separate terminal
+pkill kubectl
+
+kubectl --namespace vms delete \
+    --filename vm.yaml
+
+###########
+# Destroy #
+###########
+
+kubectl --namespace apps delete \
+    --filename app
+
+# Destroy or reset the cluster

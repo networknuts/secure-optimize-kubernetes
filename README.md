@@ -11,12 +11,12 @@ Start securing Kubernetes cluster by understanding CIS benchmarks. Learn to scan
 Control pod scheduling using node-selectors, affinity/anti-affinity, taints & tolerations. Learn pod disruption budget. Scaling application with manual and auto-scaling. Configure auditing of events in your Kubernetes cluster. 
 3. [Prioritize Workloads](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-3-Priortize-Resources)
 Understand importance of "quality of service" for applications. Configure applications in besteffort, burstable and guaranteed quality of service. Understand relation between pod eviction and qos. Learn to install metric server. Configure priority classes for critical applications. Understand topology spread. Namespaces with resource quota and limit ranges configurations.
-4. [Service Mesh](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-4-Service-Mesh)
-Importance of Service Mesh in a kubernetes cluster. Installing Istio as service mesh. Running applicatin with service mesh. Controlling traffic using routing policies.
+4. [Helm Charts](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-4-Helm-Charts)
+Understand Helm as a package manager for Kubernetes. Installing and integrating helm with Kubernetes. Running applications using helm. Upgrading applications. Rollback application. Removing application using helm. Creating custom helm charts.
 5. [Ingress Controller](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-5-Ingress-Controller)
 Understanding Ingress-controller. Installing and using nginx ingress controller with Kubernetes cluster.
-6. [Helm Charts](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-6-Helm-Chartst)
-Understand Helm as a package manager for Kubernetes. Installing and integrating helm with Kubernetes. Running applications using helm. Upgrading applications. Rollback application. Removing application using helm. Creating custom helm charts. 
+6. [Service Mesh](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-6-Service-Mesh)
+Importance of Service Mesh in a kubernetes cluster. Installing Istio as service mesh. Running applicatin with service mesh. Controlling traffic using routing policies.
 7. [CNI & CSI](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-7-Advance-CNI-and-CSI)
 Kubernetes Networking. Understanding Kubernetes IP Ranges. Kubernetes network model. DNS in Kubernetes. CNI plugins. Understanding storage. Implementing shared storage and accessing it from a Kubernetes application. Storage Classes. 
 8. [Kubernetes Operators](https://github.com/networknuts/secure-optimize-kubernetes/tree/main/Chapter-8-Kubernetes-Operatorss)

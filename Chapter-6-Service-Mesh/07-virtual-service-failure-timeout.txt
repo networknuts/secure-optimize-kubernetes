@@ -1,0 +1,18 @@
+
+Virtual Service which will attempt 3 times and each attempt is considered as failure if it takes more than 2 seconds
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: my-app
+spec:
+  hosts:
+  - "*"
+  http:
+  - route:
+      - destination:
+        host: service-name <my-app.my-ns.svc.cluster.local>
+        subset: v2  #version of service
+      retries:
+        attempts: 3
+        perTryTimeout: 2s

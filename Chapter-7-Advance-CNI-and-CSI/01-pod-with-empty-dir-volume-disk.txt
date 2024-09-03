@@ -33,5 +33,5 @@ spec:
 # All containers running in a given pod will independently read/write data to the same emptyDir volume. 
 # The default mountPath for each pod on the node, has a root location of:
 
-# /var/lib/kubelet/pods/{podid}/volumes/kubernetes.io~empty-dir/
+# /var/lib/kubelet/pods/{pod-id}/volumes/kubernetes.io~empty-dir/
 

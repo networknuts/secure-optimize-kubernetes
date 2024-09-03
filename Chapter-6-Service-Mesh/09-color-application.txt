@@ -1,0 +1,155 @@
+## GREEN
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green
+  labels:
+    app: green
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: green
+  template:
+    metadata:
+      labels:
+        app: green
+    spec:
+      containers:
+        - image: pj3677/color-app:1.0.0
+          imagePullPolicy: Always
+          name: green
+          ports:
+            - containerPort: 3000
+          env:
+            - name: BG_COLOR
+              value: "#10b981"
+            - name: FG_COLOR
+              value: "#FFFFFF"
+            - name: MESSAGE
+              value: "GREEN"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: green
+  labels:
+    app: green
+spec:
+  selector:
+    app: green
+  ports:
+    - port: 80
+      name: http
+      targetPort: 3000
+
+
+### RED
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: red
+  labels:
+    app: red
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: red
+  template:
+    metadata:
+      labels:
+        app: red
+    spec:
+      containers:
+        - image: pj3677/color-app:1.0.0
+          imagePullPolicy: Always
+          name: red
+          ports:
+            - containerPort: 3000
+          env:
+            - name: BG_COLOR
+              value: "#ef4444"
+            - name: FG_COLOR
+              value: "#FFFFFF"
+            - name: MESSAGE
+              value: "RED"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: red
+  labels:
+    app: red
+spec:
+  selector:
+    app: red
+  ports:
+    - port: 80
+      name: http
+      targetPort: 3000
+
+
+
+### CREATE GATEWAY AND VIRTUAL SERVICE
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - 'red.example.com'
+        - 'green.example.com'
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: red
+spec:
+  hosts:
+    - 'red.example.com'
+  gateways:
+    - gateway
+  http:
+    - route:
+        - destination:
+            host: red.default.svc.cluster.local
+            port:
+              number: 80
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: green
+spec:
+  hosts:
+    - 'green.example.com'
+  gateways:
+    - gateway
+  http:
+    - route:
+        - destination:
+            host: green.default.svc.cluster.local
+            port:
+              number: 80
+
+
+## GET GATEWAY URL
+kubectl -n istio-system get svc #note down istio-ingressgateway address
+OR
+kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+
+### CHECK
+
+curl -H "Host: green.example.com" http://$GATEWAY_URL
+
